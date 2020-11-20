@@ -55,3 +55,6 @@ pip3 install redis
 
 ## Test Connections
 Once both containers are running, run the `connection_test.py` script, this script will try to connect to both databases
+
+## Database Setup
+To set up the Postgres database, the commands for creating the tables can be found in `setup.sql`
