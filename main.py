@@ -12,7 +12,7 @@ def read_carts(filename):
     data = []
     for line in f:
         d = line.rstrip("\n").split(";")
-        data.append([int(d[0]), int(d[1]), int(d[2])])
+        data.append((int(d[0]), int(d[1]), int(d[2])))
     return data
 
 
@@ -30,7 +30,10 @@ def main():
     # Convert the query param into an integer
     query_type = int(args.query)
 
+
     # Tests
+    d = read_carts(FILENAME)
+    print(len(d))
     r = dbc.RedisConnection()
     p = dbc.PostgresConnection()
     r.insert_data(1, 2, 3)
