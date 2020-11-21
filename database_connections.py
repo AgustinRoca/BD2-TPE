@@ -38,6 +38,11 @@ class PostgresConnection:
                     (product_id, user_id, quantity))
         self.con.commit()
 
+    # Clears the carts table
+    def delete_all(self):
+        cur = self.con.cursor()
+        cur.execute("DELETE FROM carts;")
+        self.con.commit()
 
 # Class for the Redis database connection
 class RedisConnection:
@@ -55,3 +60,7 @@ class RedisConnection:
         self.con.hincrby(self.CLIENT_BASE_KEY + str(user_id), product_id, quantity)
         self.con.sadd(self.CLIENTS_KEY, user_id)
         self.con.hincrby(self.PRODUCTS_KEY, product_id, quantity)
+
+    # Deletes all the keys from the database
+    def delete_all(self):
+        self.con.flushall(False)
