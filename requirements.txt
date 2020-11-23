@@ -1,2 +1,4 @@
 psycopg2
 redis
+faker
+faker-commerce
