@@ -47,10 +47,9 @@ docker start myredis
 ```
 
 ## Install Modules
-Using `pip`, we install:
+Using `pip`, we install the required dependencies:
 ```
-pip3 install psycopg2
-pip3 install redis
+pip3 install -r requirements.txt
 ```
 
 ## Test Connections
