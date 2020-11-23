@@ -1,7 +1,7 @@
 import sys
 
 from utils import database_connections as dbc
-from generators.postgres_generator import populate_database
+from generators.data_generator import populate_database
 import utils.args as args_utils
 
 FILENAME = "./data/carts.csv"

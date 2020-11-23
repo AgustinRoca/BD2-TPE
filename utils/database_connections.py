@@ -21,40 +21,27 @@ class PostgresConnection:
                                     host=config['host'], port=config['port'])
         cur = self.con.cursor()
         cur.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id INT,
-            full_name VARCHAR(255) NOT NULL
-        );
-        
-        ALTER TABLE users DROP CONSTRAINT IF EXISTS users_pkey CASCADE;
-        ALTER TABLE users ADD CONSTRAINT users_pkey PRIMARY KEY (id);
-        
-        CREATE TABLE IF NOT EXISTS products (
-            id INT,
-            title text NOT NULL,
-            description text NOT NULL,
-            price int NOT NULL
-        );
-        
-        ALTER TABLE products DROP CONSTRAINT IF EXISTS products_pkey CASCADE;
-        ALTER TABLE products ADD CONSTRAINT products_pkey PRIMARY KEY (id);
-        
-        CREATE TABLE IF NOT EXISTS carts (
-            product_id INT,
-            user_id INT,
-            quantity INT NOT NULL,
-            UNIQUE(user_id, product_id),
-            FOREIGN KEY (product_id) REFERENCES products(id),
-            FOREIGN KEY (user_id) REFERENCES users(id)
-        );
-        
-        ALTER TABLE carts DROP CONSTRAINT IF EXISTS carts_pkey;
-        ALTER TABLE carts DROP CONSTRAINT IF EXISTS carts_user_id_fkey;
-        ALTER TABLE carts DROP CONSTRAINT IF EXISTS carts_product_id_fkey;
- 
-        ALTER TABLE carts ADD CONSTRAINT carts_pkey PRIMARY KEY (product_id, user_id);
-        ALTER TABLE carts ADD FOREIGN KEY (product_id) REFERENCES products(id);
-        ALTER TABLE carts ADD FOREIGN KEY (user_id) REFERENCES users(id);
+            CREATE TABLE IF NOT EXISTS users (
+                id INT PRIMARY KEY,
+                full_name VARCHAR(255) NOT NULL
+            );
+            
+            CREATE TABLE IF NOT EXISTS products (
+                id INT PRIMARY KEY,
+                title text NOT NULL,
+                description text NOT NULL,
+                price int NOT NULL
+            );
+            
+            CREATE TABLE IF NOT EXISTS carts (
+                product_id INT,
+                user_id INT,
+                quantity INT NOT NULL,
+                UNIQUE(user_id, product_id),
+                FOREIGN KEY (product_id) REFERENCES products(id),
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                PRIMARY KEY (product_id, user_id)
+            );
         """)
         self.con.commit()
 
