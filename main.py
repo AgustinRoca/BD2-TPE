@@ -1,5 +1,8 @@
-import argparse
-import database_connections as dbc
+import sys
+
+from utils import database_connections as dbc
+from generators.postgres_generator import populate_database
+import utils.args as args_utils
 
 FILENAME = "./data/carts.csv"
 
@@ -18,26 +21,25 @@ def read_carts(filename):
 
 # main() function
 def main():
-    # Command line args are in sys.argv[1], sys.argv[2] ..
-    # sys.argv[0] is the script name itself and can be ignored
-    # parse arguments
-    parser = argparse.ArgumentParser(description="Main program for BD2 TPE")
-
-    # add arguments
-    parser.add_argument('-q', dest='query', required=True)
-    args = parser.parse_args()
+    args = args_utils.parse_args(sys.argv[1:])
+    postgres_config = args_utils.get_postgres_config(args)
+    redis_config = args_utils.get_redis_config(args)
 
     # Convert the query param into an integer
-    query_type = int(args.query)
+    # query_type = int(args.query)
+
+    p = dbc.PostgresConnection(config=postgres_config)
+    if args.generate is not None:
+        populate_database(p.con)
 
 
     # Tests
-    d = read_carts(FILENAME)
-    print(len(d))
-    r = dbc.RedisConnection()
-    p = dbc.PostgresConnection()
-    r.insert_data(1, 2, 3)
-    p.insert_data(1, 2, 3)
+    # d = read_carts(FILENAME)
+    # print(len(d))
+    # r = dbc.RedisConnection()
+    # p = dbc.PostgresConnection()
+    # r.insert_data(1, 2, 3)
+    # p.insert_data(1, 2, 3)
 
 
 # call main
