@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY,
-    full_name VARCHAR(255) NOT NULL
+    full_name TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS products (
