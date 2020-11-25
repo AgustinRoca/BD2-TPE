@@ -22,13 +22,16 @@ def parse_args(args):
                         help='Specifies the postgres DB password. Default: "password"')
 
     parser.add_argument('-rh', '--redis-host', dest='rh', help='Specifies the redis DB host url. Default: "localhost"')
-    parser.add_argument('-rp', '--redis-port', dest='rp', help='Specifies the redis DB port. Default: "6379"')
-    parser.add_argument('-rd', '--redis-database', dest='rd', help='Specifies the redis DB. Default: "0"')
+    parser.add_argument('-rp', '--redis-port', dest='rp', type=int, help='Specifies the redis DB port. Default: "6379"')
+    parser.add_argument('-rd', '--redis-database', dest='rd', type=int, help='Specifies the redis DB. Default: "0"')
 
     group.add_argument('-q', '--query', dest='query', type=int, help='Specifies the query to run')
     group.add_argument('-g', '--generate', dest='generate', action='store_true', help='Populates databases')
 
-    return parser.parse_known_args(args)[0]
+    args = parser.parse_known_args(args)[0]
+    _assert_port(args.pp)
+    _assert_port(args.rp)
+    return args
 
 
 def set_config(arg, config: dict, key: str):
@@ -71,3 +74,13 @@ def get_redis_config(args: argparse.Namespace):
     set_config(rd, config, 'database')
 
     return config
+
+
+def _assert_port(port):
+    if port is None:
+        return
+
+    if isinstance(port, str):
+        port = int(port)
+    if port < 0 or 0xFFFF < port:
+        raise ValueError('Port number out of bounds')
