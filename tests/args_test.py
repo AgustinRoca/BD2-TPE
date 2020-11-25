@@ -29,8 +29,7 @@ class PostgresArgsTest(unittest.TestCase):
         self.assertEqual(config['username'], 'username')
         self.assertEqual(config['password'], 'password')
 
-    @patch('sys.stderr', new_callable=StringIO)
-    def test_postgres_config_invalid_port_type(self, mock_stderr):
+    def test_postgres_config_invalid_port_type(self):
         with self.assertRaises(ValueError):
             args_utils.parse_args([
                 '-g',
