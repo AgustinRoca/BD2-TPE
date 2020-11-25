@@ -21,11 +21,11 @@ class ArgsTest(unittest.TestCase):
 
         config = args_utils.get_postgres_config(args)
 
-        self.assertEquals(config['host'], 'host')
-        self.assertEquals(config['port'], '5432')
-        self.assertEquals(config['database'], 'database')
-        self.assertEquals(config['username'], 'username')
-        self.assertEquals(config['password'], 'password')
+        self.assertEqual(config['host'], 'host')
+        self.assertEqual(config['port'], '5432')
+        self.assertEqual(config['database'], 'database')
+        self.assertEqual(config['username'], 'username')
+        self.assertEqual(config['password'], 'password')
 
     def test_redis_config(self):
         args = args_utils.parse_args([
@@ -41,9 +41,9 @@ class ArgsTest(unittest.TestCase):
 
         config = args_utils.get_redis_config(args)
 
-        self.assertEquals(config['host'], 'host')
-        self.assertEquals(config['port'], 6399)
-        self.assertEquals(config['database'], 0)
+        self.assertEqual(config['host'], 'host')
+        self.assertEqual(config['port'], 6399)
+        self.assertEqual(config['database'], 0)
 
     def test_generate(self):
         args = args_utils.parse_args(['-g'])
@@ -54,4 +54,4 @@ class ArgsTest(unittest.TestCase):
         args = args_utils.parse_args(['-q', '1'])
 
         self.assertIsNotNone(args.query)
-        self.assertEquals(args.query, 1)
+        self.assertEqual(args.query, 1)
