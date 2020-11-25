@@ -1,6 +1,7 @@
 import unittest
 from utils import args as args_utils
-
+from io import StringIO
+from unittest.mock import patch
 
 class ArgsTest(unittest.TestCase):
     def test_postgres_config(self):
@@ -55,3 +56,15 @@ class ArgsTest(unittest.TestCase):
 
         self.assertIsNotNone(args.query)
         self.assertEqual(args.query, 1)
+
+    @patch('sys.stderr', new_callable=StringIO)
+    def test_no_args(self, mock_stderr):
+        with self.assertRaises(SystemExit):
+            args_utils.parse_args([])
+        self.assertRegexpMatches(mock_stderr.getvalue(), r"error.*argument.*required")
+
+    @patch('sys.stderr', new_callable=StringIO)
+    def test_generate_query_args(self, mock_stderr):
+        with self.assertRaises(SystemExit):
+            args_utils.parse_args(['-g', '-q', '1'])
+        self.assertRegexpMatches(mock_stderr.getvalue(), r"error.*argument.*not allowed")
