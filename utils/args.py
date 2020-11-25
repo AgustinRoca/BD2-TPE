@@ -25,10 +25,10 @@ def parse_args(args):
     parser.add_argument('-rp', '--redis-port', dest='rp', help='Specifies the redis DB port. Default: "6379"')
     parser.add_argument('-rd', '--redis-database', dest='rd', help='Specifies the redis DB. Default: "0"')
 
-    group.add_argument('-q', '--query', dest='query', help='Specifies the query to run')
-    group.add_argument('-g', '--generate', dest='generate', type=bool, help='Populates databases')
+    group.add_argument('-q', '--query', dest='query', type=int, help='Specifies the query to run')
+    group.add_argument('-g', '--generate', dest='generate', action='store_true', help='Populates databases')
 
-    return parser.parse_args(args)
+    return parser.parse_known_args(args)[0]
 
 
 def set_config(arg, config: dict, key: str):
