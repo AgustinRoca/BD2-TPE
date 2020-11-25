@@ -3,8 +3,8 @@ from faker_commerce import Provider
 import argparse
 
 # Some constants
-FILENAME_USERS = "./data/users.csv"
-FILENAME_PRODUCTS = "./data/products.csv"
+FILENAME_USERS = "../data/users.csv"
+FILENAME_PRODUCTS = "../data/products.csv"
 
 
 # GENERATION
@@ -73,11 +73,11 @@ def main():
 
     # Generating and storing the info
     print("Generating users...")
-    users = generate_users(user_amount, fake)
+    # users = generate_users(user_amount, fake)
     print("Generating products...")
     products = generate_products(product_amount, fake)
     print("Saving users...")
-    save_users(users)
+    # save_users(users)
     print("Saving products...")
     save_products(products)
 
