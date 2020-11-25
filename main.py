@@ -1,7 +1,6 @@
 import sys
 
 from utils import database_connections as dbc
-from generators.data_generator import populate_database
 import utils.args as args_utils
 
 FILENAME = "./data/carts.csv"
@@ -27,11 +26,6 @@ def main():
 
     # Convert the query param into an integer
     # query_type = int(args.query)
-
-    p = dbc.PostgresConnection(config=postgres_config)
-    if args.generate is not None:
-        populate_database(p.con)
-
 
     # Tests
     # d = read_carts(FILENAME)
