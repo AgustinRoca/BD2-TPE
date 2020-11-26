@@ -56,3 +56,13 @@ jobs:
 
       - name: Test
         run: python -m unittest discover -s ./tests -p "*_test.py"
+        env:
+          PG_HOST: postgres
+          PG_PORT: 5432
+          PG_DB: postgres
+          PG_USER: postgres
+          PG_PASS: postgres
+
+          REDIS_HOST: redis
+          REDIS_DB: 0
+          REDIS_PORT: 6379

@@ -93,8 +93,19 @@ class PostgresConnection:
     # Clears the carts table
     def delete_all(self):
         cur = self.con.cursor()
-        cur.execute("DELETE FROM carts;")
+        cur.execute("TRUNCATE carts CASCADE; TRUNCATE products CASCADE; TRUNCATE users CASCADE;")
         self.con.commit()
+
+    # QUERIES
+    def query_1(self):
+        cur = self.con.cursor()
+        cur.execute("""
+            SELECT COUNT(DISTINCT user_id) FROM carts;
+        """)
+        self.con.commit()
+        count = cur.fetchall()[0][0]
+        cur.close()
+        return count
 
 
 # Class for the Redis database connection
@@ -118,7 +129,7 @@ class RedisConnection:
         self.con = redis.StrictRedis(host=config['host'], port=config['port'], db=config['database'])
 
     # Method to insert data into the corresponding structures
-    def insert_data(self, user_id, product_id, quantity):
+    def insert_cart(self, user_id, product_id, quantity):
         self.con.hincrby(self.CLIENT_BASE_KEY + str(user_id), product_id, quantity)
         self.con.sadd(self.CLIENTS_KEY, user_id)
         self.con.hincrby(self.PRODUCTS_KEY, product_id, quantity)
@@ -126,3 +137,7 @@ class RedisConnection:
     # Deletes all the keys from the database
     def delete_all(self):
         self.con.flushall(False)
+
+    # QUERIES
+    def query_1(self):
+        return self.con.scard(self.CLIENTS_KEY)
