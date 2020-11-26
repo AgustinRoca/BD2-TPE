@@ -137,6 +137,16 @@ class PostgresConnection:
         cur.close()
         return count if count is not None else 0
 
+    def query_5(self, user_id, product_id):
+        cur = self.con.cursor()
+        cur.execute("""
+            SELECT EXISTS(SELECT 1 FROM carts WHERE user_id = %s AND product_id = %s);
+        """, (user_id, product_id))
+        self.con.commit()
+        exists = cur.fetchall()[0][0]
+        cur.close()
+        return exists
+
 
 # Class for the Redis database connection
 class RedisConnection:
@@ -183,3 +193,7 @@ class RedisConnection:
     def query_4(self):
         val = self.con.hlen(self.PRODUCTS_KEY)
         return int(val) if val is not None else 0
+
+    def query_5(self, user_id, product_id):
+        val = self.con.hexists(self.CLIENT_BASE_KEY + str(user_id), product_id)
+        return val
