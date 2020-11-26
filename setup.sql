@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS products (
     id INT PRIMARY KEY,
     title text NOT NULL,
     description text NOT NULL,
-    price REAL NOT NULL
+    price INT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS carts (

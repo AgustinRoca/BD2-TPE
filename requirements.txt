@@ -1,5 +1,5 @@
 psycopg2
 redis
 faker
-faker-commerce==1.0.2
+faker-commerce==1.0.3
 numpy
