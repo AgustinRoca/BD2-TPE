@@ -10,15 +10,23 @@ FILENAME = "./data/carts.csv"
 # Function to generate the carts information
 def generate_carts(cart_amount, user_amount, product_amount):
     data = []
+    users = {}
+    for i in range(1, user_amount + 1):
+        users[i] = set(())
 
     # Generates random arrays with the information
     u = random.randint(1, user_amount, cart_amount)
-    p = random.randint(1, product_amount, cart_amount)
     a = random.randint(MIN_AMOUNT, MAX_AMOUNT, cart_amount)
 
     # Fills the data array with the information
     for i in range(cart_amount):
-        data.append([u[i], p[i], a[i]])
+        ok = False
+        while not ok:
+            p = random.randint(1, product_amount)
+            if not (p in users[u[i]]):
+                ok = True
+                users[u[i]].add(p)
+        data.append([u[i], p, a[i]])
     return data
 
 
