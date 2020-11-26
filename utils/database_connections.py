@@ -58,9 +58,23 @@ class PostgresConnection:
 
     # Clears the carts table
     # noinspection SqlResolve
-    def delete_all(self):
+    def delete_carts(self):
         cur = self.con.cursor()
         cur.execute("DELETE FROM carts;")
+        self.con.commit()
+
+    # Clears the carts table
+    # noinspection SqlResolve
+    def delete_products(self):
+        cur = self.con.cursor()
+        cur.execute("TRUNCATE products;")
+        self.con.commit()
+
+    # Clears the carts table
+    # noinspection SqlResolve
+    def delete_users(self):
+        cur = self.con.cursor()
+        cur.execute("TRUNCATE users;")
         self.con.commit()
 
     # Closes the connection

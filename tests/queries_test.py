@@ -68,7 +68,10 @@ class PostgresQueriesTest(DatabaseTest):
 
     @classmethod
     def tearDownClass(cls):
-        cls.con.delete_all()
+        cls.con.delete_carts()
+        cls.con.delete_products()
+        cls.con.delete_users()
+
         cls.con.close()
 
     @classmethod
@@ -95,7 +98,9 @@ class PostgresQueriesTest(DatabaseTest):
         return config
 
     def setUp(self) -> None:
-        self.con.delete_all()
+        self.con.delete_carts()
+        self.con.delete_products()
+        self.con.delete_users()
 
         self.con.insert_user("Prueba1", 1)
         self.con.insert_user("Prueba2", 2)
