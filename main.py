@@ -5,7 +5,8 @@ import utils.args as args_utils
 import time
 
 FILENAME = "./data/carts.csv"
-DATA_SAMPLES_COUNT = 10
+QUERY_DATA_SAMPLES_COUNT = 10
+TIMES_DATA_SAMPLES_COUNT = 5
 
 
 # Function to read the carts data from the files
@@ -22,11 +23,24 @@ def read_carts(filename):
 
 
 def insert_in_db(carts, db):
-    # start = time.time()
+    start = time.time()
     for cart in carts:
         db.insert_cart(cart[0], cart[1], cart[2])
-    # end = time.time()
-    # return end - start
+    end = time.time()
+    return end - start
+
+
+def run_mono_stress_insertions(carts):
+    r = dbc.RedisConnection()
+    p = dbc.PostgresConnection()
+
+    for i in range(QUERY_DATA_SAMPLES_COUNT):
+        r.delete_all()
+        p.delete_carts()
+        t = insert_in_db(carts, r)
+        print("REDIS TIME =", t)
+        t = insert_in_db(carts, p)
+        print("POSTGRES TIME =")
 
 
 def insert_synchronic_data(carts):
@@ -34,7 +48,7 @@ def insert_synchronic_data(carts):
     p = dbc.PostgresConnection()
 
     r.delete_all()
-    p.delete_all()
+    p.delete_carts()
 
     # Redis
     print("Inserting in REDIS")
@@ -93,7 +107,7 @@ def run_queries():
     r_times = init_query_map()
     p_times = init_query_map()
 
-    for i in range(DATA_SAMPLES_COUNT):
+    for i in range(QUERY_DATA_SAMPLES_COUNT):
         # QUERY 1
         r_times[1].append(run_query_1(r))
         p_times[1].append(run_query_1(p))
@@ -124,13 +138,13 @@ def main():
 
     # Tests
     carts = read_carts(FILENAME)
-    print("Inserting data")
-    insert_synchronic_data(carts)
 
-    # STRESS EN 1 THREAD
     if args.query == 1:
         print("Running STRESS EN 1 THREAD")
+        run_mono_stress_insertions(carts)
     elif args.query > 3:
+        print("Inserting data")
+        insert_synchronic_data(carts)
         print("Running ALL DATA QUERIES")
         run_queries()
 
