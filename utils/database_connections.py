@@ -58,7 +58,7 @@ class PostgresConnection:
         self.con.commit()
         cur.close()
 
-    def insert_user(self, full_name, id = None):
+    def insert_user(self, full_name, id=None):
         cur = self.con.cursor()
 
         if id is None:
@@ -69,7 +69,7 @@ class PostgresConnection:
         self.con.commit()
         cur.close()
 
-    def insert_product(self, title, description, price, id = None):
+    def insert_product(self, title, description, price, id=None):
         cur = self.con.cursor()
 
         if id is None:
@@ -105,7 +105,17 @@ class PostgresConnection:
         self.con.commit()
         count = cur.fetchall()[0][0]
         cur.close()
-        return count
+        return count if count is not None else 0
+
+    def query_2(self, product_id):
+        cur = self.con.cursor()
+        cur.execute("""
+            SELECT SUM(quantity) FROM carts WHERE product_id = %s;
+        """, [product_id])
+        self.con.commit()
+        count = cur.fetchall()[0][0]
+        cur.close()
+        return count if count is not None else 0
 
 
 # Class for the Redis database connection
@@ -141,3 +151,7 @@ class RedisConnection:
     # QUERIES
     def query_1(self):
         return self.con.scard(self.CLIENTS_KEY)
+
+    def query_2(self, product_id):
+        val = self.con.hget(self.PRODUCTS_KEY, product_id)
+        return int(val) if val is not None else 0

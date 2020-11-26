@@ -16,7 +16,25 @@ REDIS_DB = 'REDIS_DB'
 CLIENTS_WITH_CARTS = 2
 
 
-class PostgresQueriesTest(unittest.TestCase):
+class DatabaseTest(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.con = None
+
+    def query_1(self):
+        count = self.con.query_1()
+        self.assertEqual(count, CLIENTS_WITH_CARTS)
+
+    def query_2(self):
+        count = self.con.query_2(1)
+        self.assertEqual(count, 2)
+        count = self.con.query_2(2)
+        self.assertEqual(count, 3)
+        count = self.con.query_2(3)
+        self.assertEqual(count, 0)
+
+
+class PostgresQueriesTest(DatabaseTest):
     @classmethod
     def setUpClass(cls):
         cls.con = dbc.PostgresConnection(cls._get_config())
@@ -37,8 +55,10 @@ class PostgresQueriesTest(unittest.TestCase):
         self.con.insert_cart(2, 2, 1)
 
     def test_query_1(self):
-        count = self.con.query_1()
-        self.assertEqual(count, CLIENTS_WITH_CARTS)
+        self.query_1()
+
+    def test_query_2(self):
+        self.query_2()
 
     @classmethod
     def _get_config(cls):
@@ -64,7 +84,7 @@ class PostgresQueriesTest(unittest.TestCase):
         return config
 
 
-class RedisQueriesTest(unittest.TestCase):
+class RedisQueriesTest(DatabaseTest):
     @classmethod
     def setUpClass(cls):
         cls.con = dbc.RedisConnection(cls._get_config())
@@ -77,8 +97,10 @@ class RedisQueriesTest(unittest.TestCase):
         self.con.insert_cart(2, 2, 1)
 
     def test_query_1(self):
-        count = self.con.query_1()
-        self.assertEqual(count, CLIENTS_WITH_CARTS)
+        self.query_1()
+
+    def test_query_2(self):
+        self.query_2()
 
     @classmethod
     def _get_config(cls):
