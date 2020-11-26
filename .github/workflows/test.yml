@@ -13,6 +13,8 @@ jobs:
           POSTGRES_DB: postgres
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -21,6 +23,8 @@ jobs:
 
       redis:
         image: redis
+        ports:
+          - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
@@ -54,12 +58,12 @@ jobs:
       - name: Test
         run: python -m unittest discover -s ./tests -p "*_test.py"
         env:
-          PG_HOST: postgres
+          PG_HOST: localhost
           PG_PORT: 5432
           PG_DB: postgres
           PG_USER: postgres
           PG_PASS: postgres
 
-          REDIS_HOST: redis
+          REDIS_HOST: localhost
           REDIS_DB: 0
           REDIS_PORT: 6379
