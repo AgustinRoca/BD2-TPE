@@ -40,7 +40,7 @@ def run_mono_stress_insertions(carts):
         t = insert_in_db(carts, r)
         print("REDIS TIME =", t)
         t = insert_in_db(carts, p)
-        print("POSTGRES TIME =")
+        print("POSTGRES TIME =", t)
 
 
 def insert_synchronic_data(carts):
