@@ -3,6 +3,7 @@ import redis
 
 
 # Class for the Postgres database connection
+# noinspection SqlNoDataSourceInspection
 class PostgresConnection:
     DEFAULT_CONFIG = {
         'database': 'postgres',
@@ -58,6 +59,7 @@ class PostgresConnection:
         self.con.commit()
         cur.close()
 
+    # noinspection SqlResolve
     def insert_user(self, full_name, id=None):
         cur = self.con.cursor()
 
@@ -69,6 +71,7 @@ class PostgresConnection:
         self.con.commit()
         cur.close()
 
+    # noinspection SqlResolve
     def insert_product(self, title, description, price, id=None):
         cur = self.con.cursor()
 
@@ -83,6 +86,7 @@ class PostgresConnection:
         cur.close()
 
     # Method to insert data into the carts table
+    # noinspection SqlResolve
     def insert_cart(self, user_id, product_id, quantity):
         cur = self.con.cursor()
         cur.execute("INSERT INTO carts (product_id, user_id, quantity) VALUES (%s, %s, %s);",
@@ -101,6 +105,7 @@ class PostgresConnection:
         self.con.close()
 
     # QUERIES
+    # noinspection SqlResolve
     def query_1(self):
         cur = self.con.cursor()
         cur.execute("""
@@ -111,6 +116,7 @@ class PostgresConnection:
         cur.close()
         return count if count is not None else 0
 
+    # noinspection SqlResolve
     def query_2(self, product_id):
         cur = self.con.cursor()
         cur.execute("""
@@ -121,6 +127,7 @@ class PostgresConnection:
         cur.close()
         return count if count is not None else 0
 
+    # noinspection SqlResolve
     def query_3(self, user_id):
         cur = self.con.cursor()
         cur.execute("""
@@ -131,6 +138,7 @@ class PostgresConnection:
         cur.close()
         return count if count is not None else 0
 
+    # noinspection SqlResolve
     def query_4(self):
         cur = self.con.cursor()
         cur.execute("""
@@ -141,6 +149,7 @@ class PostgresConnection:
         cur.close()
         return count if count is not None else 0
 
+    # noinspection SqlResolve
     def query_5(self, user_id, product_id):
         cur = self.con.cursor()
         cur.execute("""

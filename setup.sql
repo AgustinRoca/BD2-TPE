@@ -1,3 +1,7 @@
+DROP TABLE IF EXISTS carts;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS products;
+
 CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY,
     full_name TEXT NOT NULL
@@ -31,3 +35,13 @@ CREATE TABLE IF NOT EXISTS carts (
     FOREIGN KEY (user_id) REFERENCES users(id),
     PRIMARY KEY (product_id, user_id)
 );
+
+COPY users(id, full_name)
+FROM '/users.csv'
+DELIMITER ';'
+CSV HEADER;
+
+COPY products(id, title, description, price)
+FROM '/products.csv'
+DELIMITER ';'
+CSV HEADER;
