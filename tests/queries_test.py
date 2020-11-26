@@ -41,6 +41,10 @@ class DatabaseTest(unittest.TestCase):
         count = self.con.query_3(3)
         self.assertEqual(count, 0)
 
+    def query_4(self):
+        count = self.con.query_4()
+        self.assertEqual(count, 2)
+
 
 class PostgresQueriesTest(DatabaseTest):
     @classmethod
@@ -94,6 +98,9 @@ class PostgresQueriesTest(DatabaseTest):
     def test_query_3(self):
         self.query_3()
 
+    def test_query_4(self):
+        self.query_4()
+
 
 class RedisQueriesTest(DatabaseTest):
     @classmethod
@@ -132,3 +139,6 @@ class RedisQueriesTest(DatabaseTest):
 
     def test_query_3(self):
         self.query_3()
+
+    def test_query_4(self):
+        self.query_4()

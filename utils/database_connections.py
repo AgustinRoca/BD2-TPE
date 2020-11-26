@@ -127,6 +127,16 @@ class PostgresConnection:
         cur.close()
         return count if count is not None else 0
 
+    def query_4(self):
+        cur = self.con.cursor()
+        cur.execute("""
+            SELECT COUNT(DISTINCT product_id) FROM carts;
+        """)
+        self.con.commit()
+        count = cur.fetchall()[0][0]
+        cur.close()
+        return count if count is not None else 0
+
 
 # Class for the Redis database connection
 class RedisConnection:
@@ -168,4 +178,8 @@ class RedisConnection:
 
     def query_3(self, user_id):
         val = self.con.hlen(self.CLIENT_BASE_KEY + str(user_id))
+        return int(val) if val is not None else 0
+
+    def query_4(self):
+        val = self.con.hlen(self.PRODUCTS_KEY)
         return int(val) if val is not None else 0
