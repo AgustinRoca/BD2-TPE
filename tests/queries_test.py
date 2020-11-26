@@ -67,6 +67,11 @@ class PostgresQueriesTest(DatabaseTest):
         cls.con = dbc.PostgresConnection(cls._get_config())
 
     @classmethod
+    def tearDownClass(cls):
+        cls.con.delete_all()
+        cls.con.close()
+
+    @classmethod
     def _get_config(cls):
         host = os.getenv(PG_HOST)
         port = os.getenv(PG_PORT)
@@ -124,6 +129,11 @@ class RedisQueriesTest(DatabaseTest):
     @classmethod
     def setUpClass(cls):
         cls.con = dbc.RedisConnection(cls._get_config())
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.con.delete_all()
+        cls.con.close()
 
     @classmethod
     def _get_config(cls):

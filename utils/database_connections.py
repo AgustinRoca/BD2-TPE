@@ -96,6 +96,10 @@ class PostgresConnection:
         cur.execute("TRUNCATE carts CASCADE; TRUNCATE products CASCADE; TRUNCATE users CASCADE;")
         self.con.commit()
 
+    # Closes the connection
+    def close(self):
+        self.con.close()
+
     # QUERIES
     def query_1(self):
         cur = self.con.cursor()
@@ -177,6 +181,10 @@ class RedisConnection:
     # Deletes all the keys from the database
     def delete_all(self):
         self.con.flushall(False)
+
+    # Closes the connection
+    def close(self):
+        self.con.close()
 
     # QUERIES
     def query_1(self):
