@@ -39,27 +39,6 @@ class PostgresQueriesTest(DatabaseTest):
     def setUpClass(cls):
         cls.con = dbc.PostgresConnection(cls._get_config())
 
-    def setUp(self) -> None:
-        self.con.delete_all()
-
-        self.con.insert_user("Prueba1", 1)
-        self.con.insert_user("Prueba2", 2)
-        self.con.insert_user("Prueba3", 3)
-
-        self.con.insert_product("Producto1", "", 1000000, 1)
-        self.con.insert_product("Producto2", "", 1000000, 2)
-        self.con.insert_product("Producto3", "", 1000000, 3)
-
-        self.con.insert_cart(1, 1, 2)
-        self.con.insert_cart(1, 2, 2)
-        self.con.insert_cart(2, 2, 1)
-
-    def test_query_1(self):
-        self.query_1()
-
-    def test_query_2(self):
-        self.query_2()
-
     @classmethod
     def _get_config(cls):
         host = os.getenv(PG_HOST)
@@ -83,14 +62,16 @@ class PostgresQueriesTest(DatabaseTest):
 
         return config
 
-
-class RedisQueriesTest(DatabaseTest):
-    @classmethod
-    def setUpClass(cls):
-        cls.con = dbc.RedisConnection(cls._get_config())
-
     def setUp(self) -> None:
         self.con.delete_all()
+
+        self.con.insert_user("Prueba1", 1)
+        self.con.insert_user("Prueba2", 2)
+        self.con.insert_user("Prueba3", 3)
+
+        self.con.insert_product("Producto1", "", 1000000, 1)
+        self.con.insert_product("Producto2", "", 1000000, 2)
+        self.con.insert_product("Producto3", "", 1000000, 3)
 
         self.con.insert_cart(1, 1, 2)
         self.con.insert_cart(1, 2, 2)
@@ -101,6 +82,12 @@ class RedisQueriesTest(DatabaseTest):
 
     def test_query_2(self):
         self.query_2()
+
+
+class RedisQueriesTest(DatabaseTest):
+    @classmethod
+    def setUpClass(cls):
+        cls.con = dbc.RedisConnection(cls._get_config())
 
     @classmethod
     def _get_config(cls):
@@ -118,3 +105,16 @@ class RedisQueriesTest(DatabaseTest):
             config['database'] = int(db)
 
         return config
+
+    def setUp(self) -> None:
+        self.con.delete_all()
+
+        self.con.insert_cart(1, 1, 2)
+        self.con.insert_cart(1, 2, 2)
+        self.con.insert_cart(2, 2, 1)
+
+    def test_query_1(self):
+        self.query_1()
+
+    def test_query_2(self):
+        self.query_2()
