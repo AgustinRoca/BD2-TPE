@@ -3,12 +3,24 @@ CREATE TABLE IF NOT EXISTS users (
     full_name TEXT NOT NULL
 );
 
+create sequence users_id_seq;
+
+alter table users alter column id set default nextval('public.users_id_seq');
+
+alter sequence users_id_seq owned by users.id;
+
 CREATE TABLE IF NOT EXISTS products (
     id INT PRIMARY KEY,
     title text NOT NULL,
     description text NOT NULL,
     price INT NOT NULL
 );
+
+create sequence products_id_seq;
+
+alter table products alter column id set default nextval('public.products_id_seq');
+
+alter sequence products_id_seq owned by products.id;
 
 CREATE TABLE IF NOT EXISTS carts (
     product_id INT,
