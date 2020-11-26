@@ -3,8 +3,6 @@ import os
 import utils.database_connections as dbc
 
 
-DDL_FILE = './ddl.sql'
-
 PG_HOST = 'PG_HOST'
 PG_PORT = 'PG_PORT'
 PG_USER = 'PG_USER'
@@ -76,8 +74,45 @@ class PostgresQueriesTest(DatabaseTest):
         """)
         cls.con.con.commit()
 
-        with open(DDL_FILE, 'r') as ddl:
-            cur.execute(ddl.read())
+        cur.execute("""
+            DROP TABLE IF EXISTS carts;
+            DROP TABLE IF EXISTS users;
+            DROP TABLE IF EXISTS products;
+            
+            CREATE TABLE IF NOT EXISTS users (
+                id INT PRIMARY KEY,
+                full_name TEXT NOT NULL
+            );
+            
+            create sequence users_id_seq;
+            
+            alter table users alter column id set default nextval('public.users_id_seq');
+            
+            alter sequence users_id_seq owned by users.id;
+            
+            CREATE TABLE IF NOT EXISTS products (
+                id INT PRIMARY KEY,
+                title text NOT NULL,
+                description text NOT NULL,
+                price INT NOT NULL
+            );
+            
+            create sequence products_id_seq;
+            
+            alter table products alter column id set default nextval('public.products_id_seq');
+            
+            alter sequence products_id_seq owned by products.id;
+            
+            CREATE TABLE IF NOT EXISTS carts (
+                product_id INT,
+                user_id INT,
+                quantity INT NOT NULL,
+                UNIQUE(user_id, product_id),
+                FOREIGN KEY (product_id) REFERENCES products(id),
+                FOREIGN KEY (user_id) REFERENCES users(id),
+                PRIMARY KEY (product_id, user_id)
+            );
+        """)
 
         cls.con.con.commit()
         cur.close()
