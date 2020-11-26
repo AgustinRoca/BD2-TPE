@@ -20,44 +20,6 @@ class PostgresConnection:
 
         self.con = psycopg2.connect(database=config['database'], user=config['username'], password=config["password"],
                                     host=config['host'], port=config['port'])
-        cur = self.con.cursor()
-        cur.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                id INT PRIMARY KEY,
-                full_name TEXT NOT NULL
-            );
-            
-            create sequence IF NOT EXISTS users_id_seq;
-            
-            alter table users alter column id set default nextval('public.users_id_seq');
-            
-            alter sequence users_id_seq owned by users.id;
-            
-            CREATE TABLE IF NOT EXISTS products (
-                id INT PRIMARY KEY,
-                title text NOT NULL,
-                description text NOT NULL,
-                price INT NOT NULL
-            );
-            
-            create sequence if not exists products_id_seq;
-            
-            alter table products alter column id set default nextval('public.products_id_seq');
-            
-            alter sequence products_id_seq owned by products.id;
-            
-            CREATE TABLE IF NOT EXISTS carts (
-                product_id INT,
-                user_id INT,
-                quantity INT NOT NULL,
-                UNIQUE(user_id, product_id),
-                FOREIGN KEY (product_id) REFERENCES products(id),
-                FOREIGN KEY (user_id) REFERENCES users(id),
-                PRIMARY KEY (product_id, user_id)
-            );
-        """)
-        self.con.commit()
-        cur.close()
 
     # noinspection SqlResolve
     def insert_user(self, full_name, id=None):
