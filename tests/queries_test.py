@@ -3,6 +3,8 @@ import os
 import utils.database_connections as dbc
 
 
+DDL_FILE = './ddl.sql'
+
 PG_HOST = 'PG_HOST'
 PG_PORT = 'PG_PORT'
 PG_USER = 'PG_USER'
@@ -65,6 +67,20 @@ class PostgresQueriesTest(DatabaseTest):
     @classmethod
     def setUpClass(cls):
         cls.con = dbc.PostgresConnection(cls._get_config())
+
+        cur = cls.con.con.cursor()
+        cur.execute("""
+            DROP TABLE IF EXISTS carts CASCADE;
+            DROP TABLE IF EXISTS products CASCADE;
+            DROP TABLE IF EXISTS users CASCADE;
+        """)
+        cls.con.con.commit()
+
+        with open(DDL_FILE, 'r') as ddl:
+            cur.execute(ddl.read())
+
+        cls.con.con.commit()
+        cur.close()
 
     @classmethod
     def tearDownClass(cls):
