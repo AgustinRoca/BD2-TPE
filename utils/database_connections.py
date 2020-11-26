@@ -62,20 +62,23 @@ class PostgresConnection:
         cur = self.con.cursor()
         cur.execute("DELETE FROM carts;")
         self.con.commit()
+        cur.close()
 
     # Clears the carts table
     # noinspection SqlResolve
     def delete_products(self):
         cur = self.con.cursor()
-        cur.execute("TRUNCATE products;")
+        cur.execute("TRUNCATE products CASCADE;")
         self.con.commit()
+        cur.close()
 
     # Clears the carts table
     # noinspection SqlResolve
     def delete_users(self):
         cur = self.con.cursor()
-        cur.execute("TRUNCATE users;")
+        cur.execute("TRUNCATE users CASCADE;")
         self.con.commit()
+        cur.close()
 
     # Closes the connection
     def close(self):
