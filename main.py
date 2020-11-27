@@ -1,13 +1,17 @@
 import sys
-
+import threading
 from utils import database_connections as dbc
+from utils import insertion_thread as it
 import utils.args as args_utils
 import time
 
 FILENAME = "./data/carts.csv"
 QUERY_DATA_SAMPLES_COUNT = 10
-TIMES_DATA_SAMPLES_COUNT = 5
-
+TIMES_DATA_SAMPLES_COUNT = 4
+THREAD_COUNT = 100
+TYPE_REDIS = "REDIS"
+TYPE_POSTGRES = "POSTGRES"
+TYPES = [TYPE_REDIS, TYPE_POSTGRES]
 
 # Function to read the carts data from the files
 def read_carts(filename):
@@ -34,13 +38,48 @@ def run_mono_stress_insertions(carts):
     r = dbc.RedisConnection()
     p = dbc.PostgresConnection()
 
-    for i in range(QUERY_DATA_SAMPLES_COUNT):
+    for i in range(TIMES_DATA_SAMPLES_COUNT):
         r.delete_all()
         p.delete_carts()
         t = insert_in_db(carts, r)
         print("REDIS TIME =", t)
         t = insert_in_db(carts, p)
         print("POSTGRES TIME =", t)
+
+
+def break_up_cart_items(carts, chunk_size):
+    return [carts[i:i + chunk_size] for i in range(0, len(carts), chunk_size)]
+
+
+def generate_clients(amount):
+    p = []
+    r = []
+    for i in range(amount):
+        p.append(dbc.PostgresConnection())
+        r.append(dbc.RedisConnection())
+    m = {TYPE_REDIS: r, TYPE_POSTGRES: p}
+    return m
+
+
+def run_multiple_stress_insertions(carts):
+    chunks = break_up_cart_items(carts, int(len(carts) / THREAD_COUNT))
+    clients = generate_clients(THREAD_COUNT)
+
+    threads = []
+
+    for i in range(TIMES_DATA_SAMPLES_COUNT):
+        clients[TYPE_REDIS][0].delete_all()
+        clients[TYPE_POSTGRES][0].delete_carts()
+        for ty in TYPES:
+            start = time.time()
+            for w in range(THREAD_COUNT):
+                t = it.InsertionThread(chunks[w], clients[ty][w])
+                t.start()
+                threads.append(t)
+            for t in threads:
+                t.join()
+            end = time.time()
+            print(ty, "TIME =", end - start)
 
 
 def insert_synchronic_data(carts):
@@ -142,6 +181,9 @@ def main():
     if args.query == 1:
         print("Running STRESS EN 1 THREAD")
         run_mono_stress_insertions(carts)
+    elif args.query == 2:
+        print("Running STRESS EN 100 THREADS")
+        run_multiple_stress_insertions(carts)
     elif args.query > 3:
         print("Inserting data")
         insert_synchronic_data(carts)
