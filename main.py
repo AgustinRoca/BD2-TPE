@@ -11,7 +11,8 @@ TIMES_DATA_SAMPLES_COUNT = 4
 THREAD_COUNT = 100
 TYPE_REDIS = "REDIS"
 TYPE_POSTGRES = "POSTGRES"
-TYPES = [TYPE_REDIS, TYPE_POSTGRES]
+TYPES = [TYPE_POSTGRES, TYPE_REDIS]
+DEGRADING_STRESS_MODULO = 100000
 
 
 # Function to read the carts data from the files
@@ -25,6 +26,22 @@ def read_carts(filename):
         # User; Product; Amount
         data.append((int(d[0]), int(d[1]), int(d[2])))
     return data
+
+
+def insert_in_db_with_modulo(carts, db):
+    start = time.time()
+    count = 1
+    for cart in carts:
+        if count % DEGRADING_STRESS_MODULO == 0:
+            s = time.time()
+            db.insert_cart(cart[0], cart[1], cart[2])
+            e = time.time()
+            print("COUNT =", count, "TIME =", e - s, end=" - ")
+        else:
+            db.insert_cart(cart[0], cart[1], cart[2])
+        count += 1
+    end = time.time()
+    return end - start
 
 
 def insert_in_db(carts, db):
@@ -45,6 +62,21 @@ def run_mono_stress_insertions(carts, postgres_config, redis_config):
         t = insert_in_db(carts, r)
         print("REDIS TIME =", t)
         t = insert_in_db(carts, p)
+        print("POSTGRES TIME =", t)
+
+
+def run_degrading_stress_insertions(carts, postgres_config, redis_config):
+    r = dbc.RedisConnection(redis_config)
+    p = dbc.PostgresConnection(postgres_config)
+
+    for i in range(TIMES_DATA_SAMPLES_COUNT):
+        r.delete_all()
+        p.delete_carts()
+        print("REDIS")
+        t = insert_in_db_with_modulo(carts, r)
+        print("REDIS TIME =", t)
+        print("POSTGRES")
+        t = insert_in_db_with_modulo(carts, p)
         print("POSTGRES TIME =", t)
 
 
@@ -185,6 +217,9 @@ def main():
     elif args.query == 2:
         print("Running STRESS EN 100 THREADS")
         run_multiple_stress_insertions(carts, postgres_config, redis_config)
+    elif args.query == 3:
+        print("Running STRESS DEGRADO")
+        run_degrading_stress_insertions(carts, postgres_config, redis_config)
     elif args.query > 3:
         print("Inserting data")
         insert_synchronic_data(carts, postgres_config, redis_config)
