@@ -30,9 +30,9 @@ def insert_in_db(carts, db):
     return end - start
 
 
-def run_mono_stress_insertions(carts):
-    r = dbc.RedisConnection()
-    p = dbc.PostgresConnection()
+def run_mono_stress_insertions(carts, postgres_config, redis_config):
+    r = dbc.RedisConnection(redis_config)
+    p = dbc.PostgresConnection(postgres_config)
 
     for i in range(QUERY_DATA_SAMPLES_COUNT):
         r.delete_all()
@@ -43,9 +43,9 @@ def run_mono_stress_insertions(carts):
         print("POSTGRES TIME =", t)
 
 
-def insert_synchronic_data(carts):
-    r = dbc.RedisConnection()
-    p = dbc.PostgresConnection()
+def insert_synchronic_data(carts, postgres_config, redis_config):
+    r = dbc.RedisConnection(redis_config)
+    p = dbc.PostgresConnection(postgres_config)
 
     r.delete_all()
     p.delete_carts()
@@ -99,9 +99,9 @@ def run_query_5(db):
     return end - start
 
 
-def run_queries():
-    r = dbc.RedisConnection()
-    p = dbc.PostgresConnection()
+def run_queries(postgres_config, redis_config):
+    r = dbc.RedisConnection(redis_config)
+    p = dbc.PostgresConnection(postgres_config)
 
     # Time
     r_times = init_query_map()
@@ -141,12 +141,12 @@ def main():
 
     if args.query == 1:
         print("Running STRESS EN 1 THREAD")
-        run_mono_stress_insertions(carts)
+        run_mono_stress_insertions(carts, postgres_config, redis_config)
     elif args.query > 3:
         print("Inserting data")
-        insert_synchronic_data(carts)
+        insert_synchronic_data(carts, postgres_config, redis_config)
         print("Running ALL DATA QUERIES")
-        run_queries()
+        run_queries(postgres_config, redis_config)
 
 
 # call main
