@@ -13,6 +13,7 @@ TYPE_REDIS = "REDIS"
 TYPE_POSTGRES = "POSTGRES"
 TYPES = [TYPE_REDIS, TYPE_POSTGRES]
 
+
 # Function to read the carts data from the files
 def read_carts(filename):
     f = open(filename, 'r')
@@ -51,19 +52,19 @@ def break_up_cart_items(carts, chunk_size):
     return [carts[i:i + chunk_size] for i in range(0, len(carts), chunk_size)]
 
 
-def generate_clients(amount):
+def generate_clients(amount, postgres_config, redis_config):
     p = []
     r = []
     for i in range(amount):
-        p.append(dbc.PostgresConnection())
-        r.append(dbc.RedisConnection())
+        p.append(dbc.PostgresConnection(postgres_config))
+        r.append(dbc.RedisConnection(redis_config))
     m = {TYPE_REDIS: r, TYPE_POSTGRES: p}
     return m
 
 
-def run_multiple_stress_insertions(carts):
+def run_multiple_stress_insertions(carts, postgres_config, redis_config):
     chunks = break_up_cart_items(carts, int(len(carts) / THREAD_COUNT))
-    clients = generate_clients(THREAD_COUNT)
+    clients = generate_clients(THREAD_COUNT, postgres_config, redis_config)
 
     threads = []
 
@@ -183,7 +184,7 @@ def main():
         run_mono_stress_insertions(carts, postgres_config, redis_config)
     elif args.query == 2:
         print("Running STRESS EN 100 THREADS")
-        run_multiple_stress_insertions(carts)
+        run_multiple_stress_insertions(carts, postgres_config, redis_config)
     elif args.query > 3:
         print("Inserting data")
         insert_synchronic_data(carts, postgres_config, redis_config)
