@@ -99,15 +99,15 @@ Once inside the Postgres terminal, we run:
 In order to run the queries and tests, both containers need to be up and running as instructed before.
 
 To run the queries and tests there are several options:
- 1. Speed test in 1 thread
+ 1. Speed test 1: Inserting 1 million products in the cart using 1 thread
 ```
 python3 ./main.py -q 1
 ```
- 2. Speed test in 100 threads
+ 2. Speed test 2: Inserting 1 million products in the cart using 100 threads (10000 from each thread)
 ```
 python3 ./main.py -q 2
 ```
- 3. Speed test degradation
+ 3. Speed test 3: Degradation
 ```
 python3 ./main.py -q 3
 ```
